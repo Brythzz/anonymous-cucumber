@@ -38,11 +38,11 @@
                     <img id="monero" src="/assets/monero.png" alt="monero">
                     <span class="mono"> <?php echo $price ?> XMR</span>
                     <h2>Your Monero (XMR) address is:</h2>
-                    <?php $adress = '84sVt19zqDyjN28bYhc4EajcVqFH5cJLAW9uQ7kasG944Tgq9og1R3gbpYfCea5zk9AGU35M4SQPmSM7Z983Jp3A1rLhrF4' ?>
-                    <span class="mono address"><?php echo $adress ?></span>
+                    <?php $address = '84sVt19zqDyjN28bYhc4EajcVqFH5cJLAW9uQ7kasG944Tgq9og1R3gbpYfCea5zk9AGU35M4SQPmSM7Z983Jp3A1rLhrF4' ?>
+                    <span class="mono address"><?php echo $address ?></span>
                 </div>
                 <?php 
-                    $link = 'monero:' . $adress . '?tx_amount=' . $price;
+                    $link = 'monero:' . $address . '?tx_amount=' . $price;
                     $qr = QRCode::getMinimumQRCode($link, QR_ERROR_CORRECT_LEVEL_M);
                     $qr->printHTML();
                 ?>
