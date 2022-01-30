@@ -30,25 +30,45 @@
         <?php
             else:
             $price = fetchExchangeRate() * 10;
+
+            if (isset($_POST['orderId'])) {
+                $address = generateMoneroAddress();
+                $message = $_POST['message']; // TODO: encrypt message
+                $order = createOrder($orderId, $address, $message, time());
+                
+                $URI = $_SERVER['REQUEST_URI'];
+                header("location:$URI");
+            }
+            else {
+                $order = fetchOrder($orderId);
+                $address = $order['address'];
+            }
         ?>
 
-            <div class="container">
-                <div>
-                    <h2>Price</h2>
-                    <img id="monero" src="/assets/monero.png" alt="monero">
-                    <span class="mono"> <?php echo $price ?> XMR</span>
-                    <h2>Your Monero (XMR) address is:</h2>
-                    <?php $address = '84sVt19zqDyjN28bYhc4EajcVqFH5cJLAW9uQ7kasG944Tgq9og1R3gbpYfCea5zk9AGU35M4SQPmSM7Z983Jp3A1rLhrF4' ?>
-                    <span class="mono address"><?php echo $address ?></span>
-                </div>
-                <?php 
-                    $link = 'monero:' . $address . '?tx_amount=' . $price;
-                    $qr = QRCode::getMinimumQRCode($link, QR_ERROR_CORRECT_LEVEL_M);
-                    $qr->printHTML();
-                ?>
-            </div>
+            <?php if ($order): ?>
 
-            <p class="info">Do NOT send the payment more than once. Wait 5-10 minutes and refresh the page, if the coins were received, they'll appear here. The item will only be shipped as soon as 10 confirmations are completed within the Monero network (usually 20-30 minutes).</p>
+                <div class="container">
+                    <div>
+                        <h2>Price</h2>
+                        <img id="monero" src="/assets/monero.png" alt="monero">
+                        <span class="mono"> <?php echo $price ?> XMR</span>
+                        <h2>Your Monero (XMR) address is:</h2>
+                        <span class="mono address"><?php echo $address ?></span>
+                    </div>
+                    <?php 
+                        $link = 'monero:' . $address . '?tx_amount=' . $price;
+                        $qr = QRCode::getMinimumQRCode($link, QR_ERROR_CORRECT_LEVEL_M);
+                        $qr->printHTML();
+                    ?>
+                </div>
+
+                <p class="info">Do NOT send the payment more than once. Wait 5-10 minutes and refresh the page, if the coins were received, they'll appear here. The item will only be shipped once 10 confirmations are completed within the Monero network (usually takes 20-30 minutes).</p>
+
+            <?php else: ?>
+
+                <p class="error">The order was not found. Please try again later.</p>
+
+            <?php endif; ?>
 
         <?php endif; ?>
 
