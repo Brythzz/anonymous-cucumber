@@ -31,8 +31,12 @@ p {
     margin: 1rem 0;
 }
 
-.info {
-    max-width: 32.5rem;
+date {
+    display: block;
+}
+
+.info, .transaction {
+    max-width: 34.375rem;
 }
 
 h1 {
@@ -98,10 +102,26 @@ textarea:first-child {
     display: flex;
     justify-content: center;
     align-items: center;
+    max-height: 196px;
+    overflow: hidden;
 }
 
 .container h2:last-of-type {
     margin-top: .5rem;
+}
+
+.transaction {
+    background: #89f1af;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.transaction span {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 input[type=submit], .button {
