@@ -59,4 +59,8 @@
     function generateMoneroAddress() {
         return '84sVt19zqDyjN28bYhc4EajcVqFH5cJLAW9uQ7kasG944Tgq9og1R3gbpYfCea5zk9AGU35M4SQPmSM7Z983Jp3A1rLhrF4';
     }
+
+    function getPublicPGPKey() {
+        return file_get_contents(__DIR__ . "/public_pgp_key.asc");
+    }
 ?>

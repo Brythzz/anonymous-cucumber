@@ -22,6 +22,8 @@
 
         <form action="/order.php/<?php echo $orderId ?>" method="post">
             <textarea name="message" id="message" cols="90" rows="10" required placeholder="Encrypted message to seller containing your shipping address and any other information required to complete the sale. Make sure it is valid, you will not be able to change it."></textarea>
+            <p>We highly recommend you encrypt your shipping address with the PGP key below</p>
+            <textarea cols="90" rows="6" readonly><?php echo getPublicPGPKey() ?></textarea>
             <input type="hidden" name="orderId" value="<?php echo $orderId ?>">
             <input type="submit" value="Continue →">
         </form>
@@ -31,9 +33,13 @@
             else:
             $price = fetchExchangeRate() * 10;
 
-            if (isset($_POST['orderId'])) {
+            if (!empty($_POST)) {
+                if (!isset($_POST['orderId']) || !isset($_POST['message'])) {
+                    die("Something went wrong!");
+                }
+
                 $address = generateMoneroAddress();
-                $message = $_POST['message']; // TODO: encrypt message
+                $message = $_POST['message'];
                 $order = createOrder($orderId, $address, $message, time());
                 
                 $URI = $_SERVER['REQUEST_URI'];
