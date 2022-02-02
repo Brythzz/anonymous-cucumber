@@ -52,6 +52,11 @@ textarea {
     resize: vertical;
     width: calc(100% - 6px);
     min-height: 100px;
+    border-radius: .25rem;
+    border: 1px solid #c4c4c4;
+}
+
+textarea:first-child {
     margin-top: 1rem;
 }
 
