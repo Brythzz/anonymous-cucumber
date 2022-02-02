@@ -3,7 +3,7 @@
     include '../qrcode.php';
 
     $urlId = basename($_SERVER['REQUEST_URI']);
-    $orderId = $_POST['orderId'] ?: getRandomHex();
+    $orderId = isset($_POST['orderId']) ? $_POST['orderId'] : getRandomHex();
     $orderId = $urlId != 'order.php' ? $urlId : $orderId;
 ?>
 
@@ -38,37 +38,84 @@
                     die("Something went wrong!");
                 }
 
-                $address = generateMoneroAddress();
+                $alreadyExists = fetchOrder($_POST['orderId']);
+                if ($alreadyExists) {
+                    die("<p>Order with this id already exists!</p>");
+                }
+
+                $res = generateMoneroAddress();
+                $address = $res['address'];
+                $address_index = $res['address_index'];
+
                 $message = $_POST['message'];
-                $order = createOrder($orderId, $address, $message, time());
+                $order = createOrder($orderId, $address, $address_index, $message, $price, time());
                 
                 $URI = $_SERVER['REQUEST_URI'];
                 header("location:$URI");
             }
             else {
                 $order = fetchOrder($orderId);
+
                 $address = $order['address'];
+                $address_index = $order['address_index'];
+                $price = $order['price'];
             }
         ?>
 
             <?php if ($order): ?>
 
-                <div class="container">
-                    <div>
-                        <h2>Price</h2>
-                        <img id="monero" src="/assets/monero.png" alt="monero">
-                        <span class="mono"> <?php echo $price ?> XMR</span>
-                        <h2>Your Monero (XMR) address is:</h2>
-                        <span class="mono address"><?php echo $address ?></span>
-                    </div>
-                    <?php 
-                        $link = 'monero:' . $address . '?tx_amount=' . $price;
-                        $qr = QRCode::getMinimumQRCode($link, QR_ERROR_CORRECT_LEVEL_M);
-                        $qr->printHTML();
-                    ?>
-                </div>
+                <?php if ($order['completed']): ?>
+                    <p>Order completed! ✨<br/>Your item should be sent within 72hrs 🥒</p>
+                
+                <?php else: ?>
 
-                <p class="info">Do NOT send the payment more than once. Wait 5-10 minutes and refresh the page, if the coins were received, they'll appear here. The item will only be shipped once 10 confirmations are completed within the Monero network (usually takes 20-30 minutes).</p>
+                    <div class="container">
+                        <div>
+                            <h2>Price</h2>
+                            <img id="monero" src="/assets/monero.png" alt="monero">
+                            <span class="mono"> <?php echo $price ?> XMR</span>
+                            <h2>Your Monero (XMR) address is:</h2>
+                            <span class="mono address"><?php echo $address ?></span>
+                        </div>
+                        <?php 
+                            $link = 'monero:' . $address . '?tx_amount=' . $price;
+                            $qr = QRCode::getMinimumQRCode($link, QR_ERROR_CORRECT_LEVEL_M);
+                            $qr->printHTML();
+                        ?>
+                    </div>
+
+                    <p class="info">Do NOT send the payment more than once. Wait 5-10 minutes and refresh the page, if the coins were received, they'll appear here. The item will only be shipped once 10 confirmations are completed within the Monero network (usually takes 20-30 minutes).</p>
+
+                    <?php
+                        $transactions = fetchIncomingTransactions($address_index);
+
+                        if ($transactions) {
+                            echo '<h2>Incoming transactions</h2>';
+                        }
+
+                        $confirmedTotal = 0;
+
+                        foreach ($transactions as $transaction) {
+                            $amount = $transaction['amount'] / 10**12;
+                            $txid = $transaction['txid'];
+                            $confirmations = $transaction['confirmations'];
+
+                            echo '<div class="transaction">'
+                                . '<span class="mono">Amount: ' . $amount . ' XMR</span>'
+                                . '<span class="mono">Tx ID: ' . $txid . '</span>'
+                                . '<span class="mono">Confirmations: ' . $confirmations . '</span>'
+                                . '</div>';
+
+                            if ($confirmations >= 10) {
+                                $confirmedTotal += $amount;
+                                if ($confirmedTotal >= $price) {
+                                    completeOrder($orderId);
+                                }
+                            }
+                        }
+                    ?>
+
+                <?php endif ?>
 
             <?php else: ?>
 

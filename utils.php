@@ -40,27 +40,73 @@
         return $order;
     }
 
-    function createOrder($id, $address, $message) {
+    function createOrder($id, $address, $address_index, $message, $price) {
         global $conn;
 
-        $sql = "INSERT INTO orders (id, address, message, time) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO orders (id, address, address_index, message, price, time) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssi", $id, $address, $message, time());
+        $stmt->bind_param("ssissi", $id, $address, $address_index, $message, $price, time());
         $stmt->execute();
 
         return [
             "id" => $id,
             "address" => $address,
+            "address_index" => $address_index,
             "message" => $message,
+            "price" => $price,
             "time" => time()
         ];
     }
 
-    function generateMoneroAddress() {
-        return '84sVt19zqDyjN28bYhc4EajcVqFH5cJLAW9uQ7kasG944Tgq9og1R3gbpYfCea5zk9AGU35M4SQPmSM7Z983Jp3A1rLhrF4';
+    function completeOrder($id) {
+        global $conn;
+
+        $sql = "UPDATE orders SET completed = 1 WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $id);
+        $stmt->execute();
     }
 
     function getPublicPGPKey() {
         return file_get_contents(__DIR__ . "/public_pgp_key.asc");
+    }
+
+    function moneroRpcCall($method, $params="") {
+        global $rpc_host, $rpc_port;
+        $url = "http://" . $rpc_host . ":" . $rpc_port . "/json_rpc";
+
+        $data = [
+            "jsonrpc" => "2.0",
+            "id" => "0",
+            "method" => $method,
+            "params" => $params
+        ];
+
+        $options = [
+            'http' => [
+                'header'  => "Content-type: application/json\r\n",
+                'method'  => "POST",
+                'content' => json_encode($data)
+            ]
+        ];
+
+        $context  = stream_context_create($options);
+        $result = file_get_contents($url, false, $context);
+
+        if (!$result) {
+            die("Something went wrong!");
+        }
+
+        return json_decode($result, true);
+    }
+
+    function generateMoneroAddress() {
+        $response = moneroRpcCall("create_address", ["account_index" => 0]);
+        return $response["result"];
+    }
+
+    function fetchIncomingTransactions($index) {
+        $response = moneroRpcCall("get_transfers", ["in" => true, "pending" => true, "subaddr_indices" => [$index]]);
+        return $response["result"]["in"];
     }
 ?>
