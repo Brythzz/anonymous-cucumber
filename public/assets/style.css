@@ -102,8 +102,6 @@ textarea:first-child {
     display: flex;
     justify-content: center;
     align-items: center;
-    max-height: 196px;
-    overflow: hidden;
 }
 
 .container h2:last-of-type {
