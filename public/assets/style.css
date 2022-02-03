@@ -190,4 +190,9 @@ table {
         margin-right: 0;
         margin-bottom: 2rem;
     }
+
+    .transaction span {
+        white-space: normal;
+        word-break: break-all;
+    }
 }
