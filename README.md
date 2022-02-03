@@ -52,5 +52,5 @@ It should contain:
 ## Monero Wallet RPC
 To start the Monero Wallet RPC (required to interact with the wallet), run the following command:
 ```shell
- ./monero-wallet-rpc --stagenet --rpc-bind-port 38083 --wallet-file "/usr/local/bin/monero/wallets/anonymous_cucumber/anonymous_cucumber" --password "<wallet_password>" --disable-rpc-login --daemon-address http://stagenet.melo.tools:38081 --untrusted-daemon
+ ./monero-wallet-rpc --stagenet --rpc-bind-port 38083 --wallet-file wallets/main --password "<wallet_password>" --disable-rpc-login --daemon-address http://stagenet.melo.tools:38081 --trusted_daemon
 ```
