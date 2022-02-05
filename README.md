@@ -45,7 +45,7 @@ It should contain:
 
     // Monero RPC
     $rpc_host = "127.0.0.1";
-    $rpc_port = "18083"; // 18083 is the customary port for mainnet
+    $rpc_port = "38083";
 ?>
 ```
 
