@@ -54,3 +54,9 @@ To start the Monero Wallet RPC (required to interact with the wallet), run the f
 ```shell
  ./monero-wallet-rpc --stagenet --rpc-bind-port 38083 --wallet-file wallets/main --password "<wallet_password>" --disable-rpc-login --daemon-address http://stagenet.melo.tools:38081 --trusted_daemon
 ```
+
+## Screenshots
+![homepage](https://user-images.githubusercontent.com/62302815/162515879-42b81a42-3fc3-458c-a805-50a5e5e321e7.png)
+![form](https://user-images.githubusercontent.com/62302815/162515884-05f1b731-1c49-4cc8-a74e-ac8d92f18a0f.png)
+![order](https://user-images.githubusercontent.com/62302815/162515886-8c4b733c-fe6e-4f1d-914d-d5eba8474837.png)
+![order_complete](https://user-images.githubusercontent.com/62302815/162515888-3be9c0ea-3ac5-4a35-85aa-e16dfa634749.png)
