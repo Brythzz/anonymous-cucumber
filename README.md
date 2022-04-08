@@ -2,7 +2,7 @@
 
 School project - Senior Year (2022)
 
-TOR Hidden service to purchase cucumbers anonymously with Monero (XMR)
+Simple web app to purchase cucumbers anonymously with Monero (XMR)
 
 ## Development
 To start the app locally, run the following commands:
